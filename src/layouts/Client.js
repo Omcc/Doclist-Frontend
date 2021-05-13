@@ -1,9 +1,17 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
+
+
+import AuthPage from "modules/Auth/pages/AuthPage"
+
+
 
 export default function Client() {
+
+    
     return (
-        <div>
-            <h1>Client</h1>
-        </div>
+       
+            <AuthPage />
+        
+        
     )
 }
