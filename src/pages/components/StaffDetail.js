@@ -1,6 +1,9 @@
 
 import React from 'react';
 import clsx from 'clsx';
+import 'pages/partials/Formik/formik-demo.css';
+import 'pages/partials/Formik/rich-editor.css';
+import Select from 'react-select';
 
 
 import { 
@@ -13,13 +16,19 @@ import {
     FormControl,
     TextField,
     MenuItem,
+    Typography
 
  } from '@material-ui/core';
 
-import {QuickUser} from "_metronic/layout/components/extras/offcanvas/QuickUser"
+ import ProfileAvatar from "pages/partials/Profile/ProfileAvatar"
+ import {useFormik} from "formik"
 
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import MultiSelect from "pages/partials/Formik/MultiSelect"
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+
+import { EditorState,convertToRaw} from 'draft-js';
+import { RichEditorExample } from "pages/partials/Formik/RichEditor";
+import * as Yup from "yup";
 
 
 
@@ -65,6 +74,33 @@ const titles = [
     },
 ]
 
+const specialisations = [
+    {
+        value:"Oral Surgery",
+        label:"Oral Surgery"
+    },
+    {
+        value:"Nursing",
+        label:"Nursing"
+    },
+    {
+        value:"Dentist",
+        label:"Dentist"
+    }
+    
+]
+
+const languages = [
+    {
+        value:"EN",
+        label:"English"
+    },
+    {
+        value:"TR",
+        label:"Turkish"
+    }
+]
+
 const gender= [
     {
         value:"Male",
@@ -75,6 +111,18 @@ const gender= [
         label:"Female"
     }
 ]
+
+const jobTitles = [
+    {
+        value:"Dentist",
+        label:"Dentist"
+    },
+    {
+        value:"Doctor",
+        label:"Doctor"
+    }
+]
+
   
   const useStyles = makeStyles(theme => ({
     root: {
@@ -88,39 +136,74 @@ const gender= [
       flexBasis: 200,
     },
   }));
+
+  const data="test"
+
+ 
+
+  
   
   export default function StaffDetail() {
+
+    const LoginSchema = Yup.object().shape({
+        firstname: Yup.string()
+            .min(3, "Minimum 3 symbols")
+            .max(50, "Maximum 50 symbols")
+            .required(
+            
+            ),
+        lastname: Yup.string()
+          .min(3, "Minimum 3 symbols")
+          .max(50, "Maximum 50 symbols")
+          .required(
+           
+          ),
+      });
+    
+      const formik = useFormik({
+        initialValues: {
+            title: 'Ms',
+            firstname: '',
+            lastname: '',
+            jobTitle:'',
+            gender: '',
+            editorState: EditorState.createEmpty(),
+            specialisations:[],
+            languages:[]
+        },
+        validationSchema: LoginSchema,
+        onSubmit: values => {
+            console.log(JSON.stringify(convertToRaw(values.editorState.getCurrentContent())))
+            console.log(values)
+            
+          
+        },
+      });
+
+      
     const classes = useStyles();
-    const [values, setValues] = React.useState({
-      title: '',
-      firstname: '',
-      lastname: '',
-      gender: '',
-      jobTitle:'',
-      description:''
-    });
+    
   
-    const handleChange = prop => event => {
-      setValues({ ...values, [prop]: event.target.value });
-    };
-  
-    const handleClickShowPassword = () => {
-      setValues({ ...values, showPassword: !values.showPassword });
-    };
+   
+
   
     return (
       <div className={`${classes.root} bg-white`}>
         
-        <div >
+        <form  className="p-5" onSubmit={formik.handleSubmit}>
 
-            <div>
+    
+            <div className="d-flex align-items-center">
+
             <TextField
             select
-            className={clsx(classes.margin, classes.textField)}
+            className={`${clsx(classes.margin, classes.textField)} `}
             variant="outlined"
+            id="title"
             label="Title"
-            value={values.title}
-            onChange={handleChange('weightRange')}
+            name="title"
+            value={formik.values.title}
+            onChange={formik.handleChange}
             InputProps={{
                 startAdornment: ""
             }}
@@ -132,70 +215,134 @@ const gender= [
             ))}
             </TextField>
 
+            
+
             <TextField
-            id="staff-firstname"
-            className={clsx(classes.margin, classes.textField)}
+            id="firstname"
+            className={`${clsx(classes.margin, classes.textField)} `}
             variant="outlined"
             label="Firstname"
-            value={values.firstname}
-            onChange={handleChange('firstname')}
+            name="firstname"
+            value={formik.values.firstname}
+            onChange={formik.handleChange}
+            error={formik.touched.firstname && Boolean(formik.errors.firstname)}
+            
             InputProps={{
                 startAdornment: "",
             }}
             />
+
+            
             
             <TextField
-            id="staff-lastname"
-            className={clsx(classes.margin, classes.textField)}
+            id="lastname"
+            className={`${clsx(classes.margin, classes.textField)} `}
             variant="outlined"
             label="Lastname"
-            value={values.lastname}
-            onChange={handleChange('lastname')}
+            name="lastname"
+            value={formik.values.lastname}
+            onChange={formik.handleChange}
+            error={formik.touched.lastname && Boolean(formik.errors.lastname)}
+            
             InputProps={{
                 startAdornment: "",
             }}
             />
 
+            <ProfileAvatar />
+
             </div>
-           
-           
-        </div>
-        <TextField
-            id="outlined-adornment-weight"
-            className={clsx(classes.margin, classes.textField)}
+
+            <div class="d-flex align-items-center">
+            <TextField
+            select
+            className={`${clsx(classes.margin, classes.textField)} `}
             variant="outlined"
-            label="Weight"
-            value={values.weight}
-            onChange={handleChange('weight')}
-            helperText="Weight"
+            id="gender"
+            label="Gender"
+            name="gender"
+            value={formik.values.gender}
+            onChange={formik.handleChange}
             InputProps={{
-                endAdornment: <InputAdornment position="end">Kg</InputAdornment>,
+                startAdornment: ""
             }}
+            >
+            {gender.map(option => (
+                <MenuItem key={option.value} value={option.value}>
+                {option.label}
+                </MenuItem>
+            ))}
+            </TextField>
+
+            <TextField
+            select
+            className={`${clsx(classes.margin, classes.textField)} `}
+            variant="outlined"
+            id="jobTitle"
+            label="Job Title"
+            name="jobTitle"
+            value={formik.values.jobTitle}
+            onChange={formik.handleChange}
+            InputProps={{
+                startAdornment: ""
+            }}
+            >
+            {jobTitles.map(option => (
+                <MenuItem key={option.value} value={option.value}>
+                {option.label}
+                </MenuItem>
+            ))}
+            </TextField>
+            </div>
+            <div className="ml-2 mt-2">
+            <Typography variant="body1" gutterBottom>
+                Descriptions
+             </Typography>
+
+            <RichEditorExample
+            editorState={formik.values.editorState}
+            onChange={formik.setFieldValue}/>
+            
+
+            </div>
+
+            <MultiSelect 
+                value = {formik.values.languages}
+                onChange = {formik.setFieldValue}
+                options = {languages}
+                fieldName = "languages"
+                label="Languages"
+            
+                
             />
 
-        <QuickUser />
-        <TextField
-          id="outlined-adornment-password"
-          className={clsx(classes.margin, classes.textField)}
-          variant="outlined"
-          type={values.showPassword ? 'text' : 'password'}
-          label="Password"
-          value={values.password}
-          onChange={handleChange('password')}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  edge="end"
-                  aria-label="Toggle password visibility"
-                  onClick={handleClickShowPassword}
-                >
-                  {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
+            <MultiSelect 
+                    value = {formik.values.specialisations}
+                    onChange = {formik.setFieldValue}
+                    options = {specialisations}
+                    fieldName = "specialisations"
+                    label="Specialisations"
+                
+                    
+            />
+
+
+
+            
+            
+    
+
+
+        <button
+            id="kt_login_signin_submit"
+            type="submit"
+            
+            className={`btn btn-primary font-weight-bold px-9 py-4 my-3`}
+          >
+            <span>Update Staff</span>
+           
+          </button>
+        </form>
       </div>
     );
   }

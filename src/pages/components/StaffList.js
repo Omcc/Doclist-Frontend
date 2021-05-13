@@ -4,13 +4,14 @@ import {Dropdown} from "react-bootstrap";
 import {DropdownCustomToggler, DropDownCRUD, DropdownMenu2,DropdownMenu3,DropdownAction} from "pages/partials/dropdowns"
 import SVG from "react-inlinesvg";
 import {toAbsoluteUrl} from "modules/Helper"
+
 export function StaffList({ className }) {
     return (
         <>
           <div className={`card card-custom ${className}`}>
             {/* Head */}
             <div className="card-header border-0">
-              <h3 className="card-title font-weight-bolder text-dark">Authors</h3>
+              <h3 className="card-title font-weight-bolder text-dark">Staffs</h3>
               <div className="card-toolbar">
                 <button className="btn btn-light-primary btn-sm font-weight-bolder ">
                     Create Staff
