@@ -15,6 +15,8 @@ import {ScrollTop} from "_metronic/layout/components/extras/ScrollTop";
 import {StickyToolbar} from "_metronic/layout/components/extras/StickyToolbar";
 
 export default function Layout({ children }) {
+    console.log(children)
+
     const uiService = useHtmlClassService();
     // Layout settings (cssClasses/cssAttributes)
     const layoutProps = useMemo(() => {

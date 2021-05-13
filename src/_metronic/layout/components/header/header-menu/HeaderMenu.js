@@ -3,7 +3,7 @@ import React from "react";
 import { useLocation } from "react-router";
 import { NavLink } from "react-router-dom";
 import SVG from "react-inlinesvg";
-import {toAbsoluteUrl} from "modules/Helper";
+import {toAbsoluteUrl,checkIsActive} from "modules/Helper";
 
 export function HeaderMenu({ layoutProps }) {
     const location = useLocation();

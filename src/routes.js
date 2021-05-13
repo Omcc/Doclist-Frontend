@@ -1,6 +1,5 @@
+import {DashboardPage,StaffPage} from "pages"
 
-import DashBoardPage from "pages/Dashboard.js"
-import Staffs from "pages/Staffs"
 
 
 
@@ -8,21 +7,21 @@ const dashboardRoutes = [
     {
         path:"/dashboard",
         name:"Dashboard",
-        component: DashBoardPage,
+        component: DashboardPage,
         layout: "/admin"
         
     },
     {
         path:"/account",
         name:"Account",
-        component: DashBoardPage,
+        component: DashboardPage,
         layout: "/admin"
         
     },
     {
         path:"/profile",
         name:"Profile",
-        component: DashBoardPage,
+        component: DashboardPage,
         layout: "/admin"
         
     },
@@ -30,7 +29,7 @@ const dashboardRoutes = [
     {
         path:"/staff",
         name:"Staff",
-        component: Staffs,
+        component: StaffPage,
         layout: "/admin"
         
     },

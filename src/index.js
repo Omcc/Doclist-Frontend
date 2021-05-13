@@ -18,15 +18,31 @@ import "./_metronic/_assets/plugins/flaticon2/flaticon.css";
 // Datepicker
 import "react-datepicker/dist/react-datepicker.css";
 
+import {
+  MetronicLayoutProvider,
+  MetronicSplashScreenProvider,
+  MetronicSubheaderProvider
+} from "_metronic/layout";
+
+import {MetronicI18nProvider} from "_metronic/i18n";
+
 ReactDOM.render(
-  <Provider  store={store}>
-    <PersistGate persistor={persistor} loading={null}>
-      <BrowserRouter>
-        <MainRoutes />
-      </BrowserRouter>
-    </PersistGate>
-    
-  </Provider>,
+  <MetronicI18nProvider>
+    <MetronicLayoutProvider>
+      <MetronicSubheaderProvider>
+        <MetronicSplashScreenProvider>
+        <Provider  store={store}>
+          <PersistGate persistor={persistor} loading={null}>
+             <BrowserRouter>
+                <MainRoutes />
+              </BrowserRouter>
+          </PersistGate>
+        </Provider>
+        </MetronicSplashScreenProvider>
+      </MetronicSubheaderProvider>
+    </MetronicLayoutProvider>
+  </MetronicI18nProvider>,
+  
   
   document.getElementById('root')
 );
