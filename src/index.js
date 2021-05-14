@@ -7,6 +7,7 @@ import {Provider} from "react-redux"
 import store, { persistor } from "redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import MainRoutes from "MainRoutes"
+import { I18nProvider } from "_metronic/i18n";
 
 import "./index.scss"; // Standard version
 // import "./sass/style.react.rtl.css"; // RTL version
@@ -34,7 +35,9 @@ ReactDOM.render(
         <Provider  store={store}>
           <PersistGate persistor={persistor} loading={null}>
              <BrowserRouter>
-                <MainRoutes />
+                <I18nProvider>
+                  <MainRoutes />
+                </I18nProvider>
               </BrowserRouter>
           </PersistGate>
         </Provider>

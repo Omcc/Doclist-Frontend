@@ -1,6 +1,7 @@
 import React from "react";
 import {Route,Link, Switch, Redirect} from "react-router-dom";
 import Login from "./Login"
+import Registration from "./Registration"
 
 import {toAbsoluteUrl} from "modules/Helper";
 
@@ -86,7 +87,7 @@ export default function AuthPage() {
               <div className="d-flex flex-column-fluid flex-center mt-30 mt-lg-0">
                 <Switch>
                 <Route path="/auth/login" component={Login}/>
-                <Route path="/auth/registration" component={Login}/>
+                <Route path="/auth/registration" component={Registration}/>
                 <Route
                     path="/auth/forgot-password"
                     component={Login}
