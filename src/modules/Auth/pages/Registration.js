@@ -8,6 +8,7 @@ import Select from 'react-select';
 import {FilledInput} from '@material-ui/core';
 import { connect } from "react-redux";
 import * as administration from "modules/Administration/_redux/adminRedux"
+import * as clinic from "modules/Clinic/_redux/clinicRedux"
 
 
 import { 
@@ -25,7 +26,7 @@ import {
  } from '@material-ui/core';
 
  import ProfileAvatar from "pages/partials/Profile/ProfileAvatar"
- import {useFormik, yupToFormErrors} from "formik"
+ import {useFormik, yupToFormErrors,getIn} from "formik"
 
 import MultiSelect from "pages/partials/Formik/MultiSelect"
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -35,6 +36,12 @@ import { RichEditorExample } from "pages/partials/Formik/RichEditor";
 import * as Yup from "yup";
 
 
+const mapDispatchToProps = {
+  
+    ...administration.actions,
+    ...clinic.actions
+  
+}
 
 const ranges = [
     {
@@ -91,16 +98,7 @@ const languages = [
 
 
 
-const jobTitles = [
-    {
-        value:"Dentist",
-        label:"Dentist"
-    },
-    {
-        value:"Doctor",
-        label:"Doctor"
-    }
-]
+
 
   
   const useStyles = makeStyles(theme => ({
@@ -123,14 +121,19 @@ const jobTitles = [
   
   
   function Registration(props) {
+    
 
     const country= useSelector(state => state.addressFields.countries)
     const cities= useSelector(state => state.addressFields.cities)
+    const counties= useSelector(state => state.addressFields.counties)
+    const clinics= useSelector(state => state.clinic.clinicTypes)
 
 
     useEffect(function(){
-      console.log(props)
+      
       props.requestCountries()
+      props.requestClinicTypes()
+      
     },[])
 
     const LoginSchema = Yup.object().shape({
@@ -148,14 +151,15 @@ const jobTitles = [
     
       const formik = useFormik({
         initialValues: {
-            clinicTypes: '',
+            clinicType: '',
             clinicName: '',
             lastname: '',
             jobTitle:'',
             
             address:{
               country:"",
-              city:""
+              city:"",
+              county:""
 
             },
             editorState: EditorState.createEmpty(),
@@ -176,7 +180,7 @@ const jobTitles = [
     
   
    
-
+ 
   
     return (
       <div className={`${classes.root} bg-white w-100`}>
@@ -254,6 +258,8 @@ const jobTitles = [
             ))}
             </TextField>
 
+  
+
             <TextField
             select
             className={`${clsx(classes.margin, classes.textField)} `}
@@ -262,16 +268,40 @@ const jobTitles = [
             label="City"
             name="address.city"
             value={formik.values.address.city}
-            onChange={formik.handleChange}
+            onChange={(e) => {  props.selectCity(e.target.value); formik.values.address.county="";formik.handleChange("address.city")(e)}}
             InputProps={{
                 startAdornment: ""
             }}
-            error={formik.touched.address.city && Boolean(formik.errors.address.city)}
+            error={getIn(formik.errors,"address.city") && getIn(formik.touched,"address.city") }
+    
             
             >
               {cities.map(option => (
                 <MenuItem key={option.id} value={option.id}>
                 {option.city_name}
+                </MenuItem>
+            ))}
+            </TextField>
+
+            <TextField
+            select
+            className={`${clsx(classes.margin, classes.textField)} `}
+            variant="outlined"
+            id="county"
+            label="County"
+            name="address.county"
+            value={formik.values.address.county}
+            onChange={formik.handleChange}
+            InputProps={{
+                startAdornment: ""
+            }}
+            error={getIn(formik.errors,"address.county") && getIn(formik.touched,"address.county") }
+    
+            
+            >
+              {counties.map(option => (
+                <MenuItem key={option.id} value={option.id}>
+                {option.county_name}
                 </MenuItem>
             ))}
             </TextField>
@@ -286,18 +316,18 @@ const jobTitles = [
             select
             className={`${clsx(classes.margin, classes.textField)} `}
             variant="outlined"
-            id="jobTitle"
-            label="Job Title"
-            name="jobTitle"
-            value={formik.values.jobTitle}
+            id="clinicType"
+            label="Clinic Type"
+            name="clinicType"
+            value={formik.values.clinicType}
             onChange={formik.handleChange}
             InputProps={{
                 startAdornment: ""
             }}
             >
-            {jobTitles.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            {clinics.map(option => (
+                <MenuItem key={option.id} value={option.id}>
+                {option.name}
                 </MenuItem>
             ))}
             </TextField>
@@ -350,4 +380,4 @@ const jobTitles = [
   }
 
 
-  export default connect(null, administration.actions)(Registration);
+  export default connect(null, mapDispatchToProps)(Registration);

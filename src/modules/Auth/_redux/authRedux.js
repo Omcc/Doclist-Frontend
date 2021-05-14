@@ -68,7 +68,7 @@ export function* saga(){
 
         try{
             const data = yield login(action.email,action.password);
-            console.log(data.data.access)
+            
             yield put(actions.login(data.data.access))
         }
         catch(error){

@@ -1,8 +1,13 @@
 import axios from "axios"
+import {getAbsoluteApiUrl} from "modules/Helper"
 
-export const COUNTRY_URL = "http://localhost:8001/api/administration/countries/"
-export const CITY_URL = (country_id) =>  `http://localhost:8001/api/administration/countries/${country_id}/cities/`
+export const LOGIN_URL=getAbsoluteApiUrl("/api/auth/token/")
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL
+
+export const COUNTRY_URL = getAbsoluteApiUrl(`/api/administration/countries/`)
+export const CITY_URL = (country_id) =>  getAbsoluteApiUrl(`/api/administration/countries/${country_id}/cities/`)
+export const COUNTY_URL = (city_id) => getAbsoluteApiUrl(`/api/administration/cities/${city_id}/counties/`)
 
 export function getCountries(){
     const config = {
@@ -23,4 +28,13 @@ export function getCities(country_id){
     console.log(CITY_URL(country_id))
 
     return axios.get(CITY_URL(country_id))
+}
+
+export function getCounties(city_id){
+    const config = {
+        headers:{
+            'Content-type':'application/json'
+        }
+    }
+    return axios.get(COUNTY_URL(city_id))
 }
