@@ -5,10 +5,12 @@ import clsx from 'clsx';
 import 'pages/partials/Formik/formik-demo.css';
 import 'pages/partials/Formik/rich-editor.css';
 import Select from 'react-select';
-import {FilledInput} from '@material-ui/core';
+
 import { connect } from "react-redux";
 import * as administration from "modules/Administration/_redux/adminRedux"
 import * as clinic from "modules/Clinic/_redux/clinicRedux"
+import DividerWithText from "pages/partials/Divider/DividerMiddleText"
+
 
 
 import { 
@@ -21,7 +23,8 @@ import {
     FormControl,
     TextField,
     MenuItem,
-    Typography
+    Typography,
+    Divider
 
  } from '@material-ui/core';
 
@@ -43,64 +46,7 @@ const mapDispatchToProps = {
   
 }
 
-const ranges = [
-    {
-      value: '0-20',
-      label: '0 to 20',
-    },
-    {
-      value: '21-50',
-      label: '21 to 50',
-    },
-    {
-      value: '51-100',
-      label: '51 to 100',
-    },
-  ];
 
-const clinicTypes = [
-    {
-        value:"Dentist",
-        label:"Dentist"
-    },
-    {
-        value:"HairPlanter",
-        label:"HairPlanter"
-    }
-]
-
-const specialisations = [
-    {
-        value:"Oral Surgery",
-        label:"Oral Surgery"
-    },
-    {
-        value:"Nursing",
-        label:"Nursing"
-    },
-    {
-        value:"Dentist",
-        label:"Dentist"
-    }
-    
-]
-
-const languages = [
-    {
-        value:"EN",
-        label:"English"
-    },
-    {
-        value:"TR",
-        label:"Turkish"
-    }
-]
-
-
-
-
-
-  
   const useStyles = makeStyles(theme => ({
     root: {
       display: 'flex',
@@ -126,7 +72,7 @@ const languages = [
     const country= useSelector(state => state.addressFields.countries)
     const cities= useSelector(state => state.addressFields.cities)
     const counties= useSelector(state => state.addressFields.counties)
-    const clinics= useSelector(state => state.clinic.clinicTypes)
+    const clinicTypes= useSelector(state => state.clinic.clinicTypes)
 
 
     useEffect(function(){
@@ -137,38 +83,42 @@ const languages = [
     },[])
 
     const LoginSchema = Yup.object().shape({
-        clinicName: Yup.string()
+        name: Yup.string()
             .min(3, "Minimum 3 symbols")
             .max(50, "Maximum 50 symbols")
             .required(
             
             ),
         address: Yup.object().shape({
-          city: Yup.number().required()
+          city: Yup.number().required(),
+          county:Yup.number().required()
         })
        
       });
     
       const formik = useFormik({
         initialValues: {
-            clinicType: '',
-            clinicName: '',
-            lastname: '',
-            jobTitle:'',
-            
+            clinic_type: '',
+            name: '',
             address:{
               country:"",
               city:"",
-              county:""
+              county:"",
+              full_address:""
 
             },
-            editorState: EditorState.createEmpty(),
-            specialisations:[],
-            languages:[]
+            user:{
+              email:"",
+              firstname:"",
+              lastname:"",
+              password:""
+            },
+            telephone:""
+            
         },
         validationSchema: LoginSchema,
         onSubmit: values => {
-            console.log(JSON.stringify(convertToRaw(values.editorState.getCurrentContent())))
+            
             console.log(values)
             
           
@@ -185,43 +135,71 @@ const languages = [
     return (
       <div className={`${classes.root} bg-white w-100`}>
         
-        <form  className="p-5 w-100" onSubmit={formik.handleSubmit}>
+        <form  className="p-5 " onSubmit={formik.handleSubmit}>
 
     
-            <div className="row w-100">
+            <div className="row ">
 
-            <div className="col-lg-5 col-md-5">
+              <div className="col-lg-5 col-md-5">
                 <TextField
                 select
-                className={`${clsx(classes.margin, classes.textField)} `}
+                className={`${clsx(classes.margin, classes.textField)} w-100`}
                 variant="outlined"
-                id="clinicType"
+                id="clinic_type"
                 label="Clinic Type"
-                name="clinicType"
-                value={formik.values.title}
+                name="clinic_type"
+                value={formik.values.clinic_type}
                 onChange={formik.handleChange}
                 InputProps={{
                     startAdornment: ""
                 }}
                 >
-
                 {clinicTypes.map(option => (
-                    <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    <MenuItem key={option.id} value={option.id}>
+                    {option.name}
                     </MenuItem>
                 ))}
                 </TextField>
-            </div>
+              </div>
+
+              
             
-            <div className="col-lg-7 col-md-7">
-                <TextField
+              <div className="col-lg-7 col-md-7">
+                  <TextField
+                  fullWidth
+                  id="name"
+                  className={`${clsx(classes.margin, classes.textField)} `}
+                  variant="outlined"
+                  label="Clinic Name"
+                  name="name"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  
+                  InputProps={{
+                      startAdornment: "",
+                  }}
+                  />
+              </div>
+
+            
+
+            
+
+            </div>
+
+            <DividerWithText className="mt-3" children={<Typography variant="h5">Clinic Address</Typography>}/>
+            <div>
+              
+            </div>
+            <TextField
                 fullWidth
-                id="clinicName"
+                id="address.full_address"
                 className={`${clsx(classes.margin, classes.textField)} `}
                 variant="outlined"
-                label="Clinic Name"
-                name="clinicName"
-                value={formik.values.clinicName}
+                label="Clinic Address"
+                name="address.full_address"
+                value={formik.values.address.full_address}
                 onChange={formik.handleChange}
                 error={formik.touched.clinicName && Boolean(formik.errors.clinicName)}
                 
@@ -229,12 +207,6 @@ const languages = [
                     startAdornment: "",
                 }}
                 />
-            </div>
-            
-
-            
-
-            </div>
 
             <div class="d-flex align-items-center">
             <TextField
@@ -306,63 +278,127 @@ const languages = [
             ))}
             </TextField>
 
+            <TextField
+                  fullWidth
+                  id="address.postal_code"
+                  className={`${clsx(classes.margin, classes.textField)} `}
+                  variant="outlined"
+                  label="Postal Code"
+                  name="address.postal_code"
+                  type="number"
+                  value={formik.values.address.postal_code}
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  
+                  InputProps={{
+                      startAdornment: "",
+                  }}
+                  />
+
+
             
 
-         
-  
             
+            </div>
+
+
+            <DividerWithText className="mt-3" children={<Typography variant="h5">Contact Informations</Typography>}/>
+            
+            <div className="row">
+
+              <div className="col-lg-4 col-md-4">
+              <TextField
+                fullWidth
+                id="user.firstname"
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                label="Firstname"
+                name="user.firstname"
+                value={formik.values.user.firstname}
+                onChange={formik.handleChange}
+                error={formik.touched.clinicName && Boolean(formik.errors.clinicName)}
+                
+                InputProps={{
+                    startAdornment: "",
+                }}
+                />
+              </div>
+            
+
+              <div className="col-lg-4 col-md-4">
+              <TextField
+                fullWidth
+                id="lastname"
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                label="Lastname"
+                name="user.lastname"
+                value={formik.values.user.lastname}
+                onChange={formik.handleChange}
+                error={formik.touched.clinicName && Boolean(formik.errors.clinicName)}
+                
+                InputProps={{
+                    startAdornment: "",
+                }}
+                />
+              </div>
+              <div className="col-lg-4 col-md-4">
+              <TextField
+                fullWidth
+                id="telephone"
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                label="Phone"
+                name="telephone"
+                value={formik.values.telephone}
+                onChange={formik.handleChange}
+                error={formik.touched.clinicName && Boolean(formik.errors.clinicName)}
+                
+                InputProps={{
+                    startAdornment: "",
+                }}
+                />
+              </div>
+           
+            </div>
 
             <TextField
-            select
-            className={`${clsx(classes.margin, classes.textField)} `}
-            variant="outlined"
-            id="clinicType"
-            label="Clinic Type"
-            name="clinicType"
-            value={formik.values.clinicType}
-            onChange={formik.handleChange}
-            InputProps={{
-                startAdornment: ""
-            }}
-            >
-            {clinics.map(option => (
-                <MenuItem key={option.id} value={option.id}>
-                {option.name}
-                </MenuItem>
-            ))}
-            </TextField>
-            </div>
-            <div className="ml-2 mt-2">
-            
-            
-
-            </div>
-
-            <MultiSelect 
-                value = {formik.values.languages}
-                onChange = {formik.setFieldValue}
-                options = {languages}
-                fieldName = "languages"
-                label="Languages"
-            
+                fullWidth
+                id="user.email"
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                label="Email"
+                name="user.email"
+                value={formik.values.user.email}
+                onChange={formik.handleChange}
+                error={formik.touched.clinicName && Boolean(formik.errors.clinicName)}
                 
-            />
-
-            <MultiSelect 
-                    value = {formik.values.specialisations}
-                    onChange = {formik.setFieldValue}
-                    options = {specialisations}
-                    fieldName = "specialisations"
-                    label="Specialisations"
+                InputProps={{
+                    startAdornment: "",
+                }}
+                />
+             <TextField
+                fullWidth
+                id="user.password"
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                label="Password"
+                name="user.password"
+                type="password"
+                value={formik.values.user.password}
+                onChange={formik.handleChange}
+                error={formik.touched.clinicName && Boolean(formik.errors.clinicName)}
                 
-                    
-            />
+                InputProps={{
+                    startAdornment: "",
+                }}
+                />
 
 
 
-            
-            
-    
+           
+
+      
 
 
         <button
@@ -371,7 +407,7 @@ const languages = [
             
             className={`btn btn-primary font-weight-bold px-9 py-4 my-3`}
           >
-            <span>Update Staff</span>
+            <span>Create Clinic</span>
            
           </button>
         </form>
