@@ -1,7 +1,7 @@
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid */
 import React from "react";
 import {Dropdown} from "react-bootstrap";
-import {DropdownCustomToggler, DropDownCRUD, DropdownMenu2,DropdownMenu3,DropdownAction} from "pages/partials/dropdowns"
+import {DropdownCustomToggler, DropDownCRUD, DropdownMenu2,DropdownMenu3,DropdownAction } from "pages/partials/dropdowns"
 import SVG from "react-inlinesvg";
 import {toAbsoluteUrl} from "modules/Helper"
 import {useSelector} from "react-redux"
@@ -12,26 +12,15 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles({
   list: {
-    overflowY: "scroll",
+    overflow: "auto",
     margin: 0,
     padding: 0,
-    listStyle: "none",
-    height: "100%",
-    '&::-webkit-scrollbar': {
-      width: '0.4em'
-    },
-    '&::-webkit-scrollbar-track': {
-      boxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
-      webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)'
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'rgba(0,0,0,.1)',
-      outline: '1px solid slategrey'
-    }
+    
+    
   }
 });
 
-export function StaffList({ className }) {
+export function StaffList({ className ,setSelectedStaff}) {
 
   
     const classes = useStyles();
@@ -76,15 +65,16 @@ export function StaffList({ className }) {
                   </span>
                 </div>
                 <div className="d-flex flex-column flex-grow-1 font-weight-bold">
-                  <a
-                    href="#"
+                  <div onClick={() => setSelectedStaff(staff.id)}
+                  
+                    
                     className="text-dark text-hover-primary mb-1 font-size-lg"
                   >
                     {staff.firstname + " " + staff.lastname}
-                  </a>
+                  </div>
                   <span className="text-muted">{staff.telephone}</span>
                 </div>
-                <ItemDropdown item="" />
+                <ItemDropdown id={staff.id} item="" />
               </div>)
               })}
       
@@ -94,7 +84,7 @@ export function StaffList({ className }) {
       );
     }
     
-    const ItemDropdown = ({item}) => {
+    const ItemDropdown = ({item,id}) => {
       return (<>
       <Dropdown className="dropdown-inline" alignRight>
         <Dropdown.Toggle
@@ -103,7 +93,7 @@ export function StaffList({ className }) {
           <i className="ki ki-bold-more-hor" />
         </Dropdown.Toggle>
         <Dropdown.Menu className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-          <DropdownAction />
+          <DropdownAction id={id} />
         </Dropdown.Menu>
       </Dropdown>
       </>);

@@ -145,8 +145,24 @@ const jobTitles = [
 
   
   
-  export default function StaffDetail() {
+  export default function StaffDetail({selectedStaff,staff}) {
 
+    console.log(staff)
+    console.log(staff.firstname)
+
+    const initialStaffValues = {
+        id:staff.id,
+        title: 'Ms',
+        firstname: staff.firstname,
+        lastname: staff.lastname,
+        jobTitle:staff.jobtitle,
+        gender: staff.gender,
+        editorState: EditorState.createEmpty(),
+        specialisations:staff.specialisations,
+        languages:staff.languages,
+    }
+
+    console.log(initialStaffValues)
     const LoginSchema = Yup.object().shape({
         firstname: Yup.string()
             .min(3, "Minimum 3 symbols")
@@ -163,17 +179,9 @@ const jobTitles = [
       });
     
       const formik = useFormik({
-        initialValues: {
-            title: 'Ms',
-            firstname: '',
-            lastname: '',
-            jobTitle:'',
-            gender: '',
-            editorState: EditorState.createEmpty(),
-            specialisations:[],
-            languages:[]
-        },
+        initialValues: initialStaffValues,
         validationSchema: LoginSchema,
+       
         onSubmit: values => {
             console.log(JSON.stringify(convertToRaw(values.editorState.getCurrentContent())))
             console.log(values)
@@ -186,9 +194,7 @@ const jobTitles = [
     const classes = useStyles();
     
   
-   
 
-  
     return (
       <div className={`${classes.root} bg-white`}>
         
