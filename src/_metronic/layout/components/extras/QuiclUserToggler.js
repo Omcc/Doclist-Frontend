@@ -15,7 +15,6 @@ export function QuickUserToggler() {
       offcanvas: objectPath.get(uiService.config, "extras.user.layout") === "offcanvas",
     };
   }, [uiService]);
-
   return (<>
         {layoutProps.offcanvas && (<OverlayTrigger
             placement="bottom"
@@ -31,7 +30,7 @@ export function QuickUserToggler() {
                   {user.fullname}
                 </span>
                 <span className="symbol symbol-35 symbol-light-success">                
-                    <span className="symbol-label font-size-h5 font-weight-bold">{user.fullname[0]}</span>
+                    <span className="symbol-label font-size-h5 font-weight-bold">{user.name}</span>
                 </span>
               </>
             </div>

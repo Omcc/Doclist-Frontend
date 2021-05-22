@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { Dropdown } from "react-bootstrap";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import {toAbsoluteUrl} from "modules/Helper";
-import { useLang, setLanguage } from "../../../../i18n";
+import { useLang, setLanguage } from "modules/i18n";
 import { DropdownTopbarItemToggler } from "../../../../_partials/dropdowns";
 
 const languages = [

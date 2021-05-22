@@ -1,0 +1,1 @@
+export const clinicId = (state) => state.auth.clinic_id

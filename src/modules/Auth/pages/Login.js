@@ -2,7 +2,7 @@ import React,{useState} from 'react'
 import { Link } from "react-router-dom";
 import {useFormik} from "formik"
 import { FormattedMessage} from "react-intl";
-import { connect } from "react-redux";
+import { connect ,useSelector} from "react-redux";
 import * as auth from "modules/Auth/_redux/authRedux"
 import * as Yup from "yup";
 import { login } from '../_redux/authCrud';
@@ -17,7 +17,11 @@ import { login } from '../_redux/authCrud';
 
 function Login(props) {
 
-    const [loading, setLoading] = useState(false);
+
+    const auth = useSelector(state=>state.auth)
+
+
+    
     const LoginSchema = Yup.object().shape({
         email: Yup.string()
           .email("Wrong email format")
@@ -129,7 +133,7 @@ function Login(props) {
             className={`btn btn-primary font-weight-bold px-9 py-4 my-3`}
           >
             <span>Sign In</span>
-            {loading && <span className="ml-3 spinner spinner-white"></span>}
+            {auth.loading && <span className="ml-3 spinner spinner-white"></span>}
           </button>
         </div>
       </form>

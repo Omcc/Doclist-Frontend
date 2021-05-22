@@ -10,7 +10,7 @@ import {Footer} from "_metronic/layout/components/footer/Footer";
 import {LayoutInit} from "_metronic/layout/components/LayoutInit";
 import {SubHeader} from "_metronic/layout/components/subheader/SubHeader";
 import {QuickPanel} from "_metronic/layout/components/extras/offcanvas/QuickPanel";
-import {QuickUser} from "_metronic/layout/components/extras/offcanvas/QuickUser";
+import {default as QuickUser} from "_metronic/layout/components/extras/offcanvas/QuickUser";
 import {ScrollTop} from "_metronic/layout/components/extras/ScrollTop";
 import {StickyToolbar} from "_metronic/layout/components/extras/StickyToolbar";
 

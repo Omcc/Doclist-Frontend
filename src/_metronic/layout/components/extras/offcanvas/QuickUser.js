@@ -1,25 +1,35 @@
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid,no-undef */
 import React from "react";
+import {useSelector} from "react-redux"
 import SVG from "react-inlinesvg";
 import { useHistory } from "react-router-dom";
 import {toAbsoluteUrl} from "modules/Helper";
+import * as auth from "modules/Auth/_redux/authRedux"
 
-export function QuickUser() {
+
+import { connect as reduxConnect } from "react-redux";
+
+function QuickUser(props) {
+
+  const {user,data} = useSelector(state => state.auth);
+  const {clinic_basic:clinicInfo} = data
   const history = useHistory();
 
   const logoutClick = () => {
+      console.log(props)
+      props.logout()
       const toggle = document.getElementById("kt_quick_user_toggle");
       if (toggle) {
         toggle.click();
       }
-      history.push("/logout");
+      
   };
 
   return (
       <div id="kt_quick_user" className="offcanvas offcanvas-right offcanvas p-10">
         <div className="offcanvas-header d-flex align-items-center justify-content-between pb-5">
           <h3 className="font-weight-bold m-0">
-            User Profile
+            Clinic Profile
             <small className="text-muted font-size-sm ml-2">12 messages</small>
           </h3>
           <a
@@ -50,7 +60,7 @@ export function QuickUser() {
                   href="#"
                   className="font-weight-bold font-size-h5 text-dark-75 text-hover-primary"
               >
-                James Jones
+                {clinicInfo.name}
               </a>
               <div className="text-muted mt-1">Application Developer</div>
               <div className="navi mt-2">
@@ -66,7 +76,7 @@ export function QuickUser() {
                     </span>
                   </span>
                   <span className="navi-text text-muted text-hover-primary">
-                    jm@softplus.com
+                    {clinicInfo.user.email}
                   </span>
                 </span>
                 </a>
@@ -269,3 +279,5 @@ export function QuickUser() {
       </div>
   );
 }
+
+export default reduxConnect(null,auth.actions)(QuickUser);

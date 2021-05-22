@@ -4,20 +4,18 @@ import {useSelector,shallowEqual} from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
 
 
-export const PrivateRoute = ({component: Component, ...rest}) => {
+ const PrivateRoute = ({component: Component,redirectPath, ...rest}) => {
 
     
 
     const {isAuthorized} = useSelector(
         ({auth}) => ({
-            isAuthorized: auth.authToken != null,
+            isAuthorized: auth.success != null,
         }),
         shallowEqual
     );
 
-    
 
-    
     
     return (
         
@@ -26,8 +24,9 @@ export const PrivateRoute = ({component: Component, ...rest}) => {
         <Route {...rest} render={props => (
             isAuthorized ?
                 <Component {...props} />
-            : <Redirect to="/" />
+            : <Redirect to={redirectPath} />
         )} />
     );
 };
 
+export default PrivateRoute

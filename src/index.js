@@ -8,7 +8,8 @@ import {Provider} from "react-redux"
 import store, { persistor } from "redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import MainRoutes from "MainRoutes"
-import { I18nProvider } from "_metronic/i18n";
+import {ConnectedRouter} from 'connected-react-router';
+
 import * as _redux from "./redux"
 
 import "./index.scss"; // Standard version
@@ -20,6 +21,7 @@ import "./_metronic/_assets/plugins/flaticon/flaticon.css";
 import "./_metronic/_assets/plugins/flaticon2/flaticon.css";
 // Datepicker
 import "react-datepicker/dist/react-datepicker.css";
+import {history} from 'redux/store'
 
 import {
   MetronicLayoutProvider,
@@ -27,28 +29,28 @@ import {
   MetronicSubheaderProvider
 } from "_metronic/layout";
 
-import {MetronicI18nProvider} from "_metronic/i18n";
+import {LangI18nProvider,I18nProvider} from "modules/i18n"
 
 _redux.setupAxios(axios,store)
 
 ReactDOM.render(
-  <MetronicI18nProvider>
+  <LangI18nProvider>
     <MetronicLayoutProvider>
       <MetronicSubheaderProvider>
         <MetronicSplashScreenProvider>
         <Provider  store={store}>
-          <PersistGate persistor={persistor} loading={null}>
-             <BrowserRouter>
-                <I18nProvider>
-                  <MainRoutes />
-                </I18nProvider>
-              </BrowserRouter>
-          </PersistGate>
+          <ConnectedRouter history={history}>
+            <PersistGate persistor={persistor} loading={null}>
+                  <I18nProvider>
+                    <MainRoutes />
+                  </I18nProvider>
+            </PersistGate>
+          </ConnectedRouter>
         </Provider>
         </MetronicSplashScreenProvider>
       </MetronicSubheaderProvider>
     </MetronicLayoutProvider>
-  </MetronicI18nProvider>,
+  </LangI18nProvider>,
   
   
   document.getElementById('root')
