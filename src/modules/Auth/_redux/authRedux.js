@@ -1,9 +1,10 @@
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import {put,takeLatest,take, call, fork,select} from "redux-saga/effects";
-import {getUserByToken,login,fetch,post,remove,CLINIC_BASIC,CLINIC_STAFFS} from "./authCrud"
+import {getUserByToken,login,fetch,post,remove,putRequest,CLINIC_BASIC,CLINIC_STAFFS} from "./authCrud"
 import { push } from 'connected-react-router';
 import * as selectors from "./selectors"
+import {fetchAll as fetchAllAdmin} from "modules/Administration/_redux/adminRedux"
 
 
 export const actionTypes = {
@@ -26,6 +27,9 @@ export const actionTypes = {
     DeleteStaffRequest:"[Staff] Delete Request",
     DeleteStaffSuccess:"[Staff] Delete Success",
     DeleteStaffFail:"[Staff] Delete Fail",
+    UpdateStaffRequest:"[Staff] Update Request",
+    UpdateStaffSuccess:"[Staff] Update Success",
+    UpdateStaffFail:"[Staff] Update Fail",
     
     
 };
@@ -95,6 +99,13 @@ export const reducer = persistReducer(
             case actionTypes.DeleteStaffSuccess:{
                 return {...state,loading:false}
             }
+
+            case actionTypes.UpdateStaffRequest:{
+                return {...state,loading:true}
+            }
+            case actionTypes.UpdateStaffSuccess:{
+                return {...state,loading:false}
+            }
             
             default:
                 return state;
@@ -123,7 +134,9 @@ export const actions = {
     createStaffRequest: (firstname,lastname) => ({type:actionTypes.CreateStaffRequest,firstname,lastname}),
     createStaffSuccess:() => ({type:actionTypes.CreateStaffSuccess}),
     deleteStaffRequest: (staffId) => ({type:actionTypes.DeleteStaffRequest,staffId}),
-    deleteStaffSuccess:() => ({type:actionTypes.DeleteStaffSuccess})
+    deleteStaffSuccess:() => ({type:actionTypes.DeleteStaffSuccess}),
+    updateStaffRequest: (staffId,body) => ({type:actionTypes.UpdateStaffRequest,staffId,body}),
+    updateStaffSuccess:() => ({type:actionTypes.UpdateStaffSuccess})
     
     
   };
@@ -133,6 +146,8 @@ export const actions = {
      
      const clinic = yield fork(fetchResource,CLINIC_BASIC,params)
      const staffs = yield fork(fetchResource,CLINIC_STAFFS,params)
+     yield fork(fetchAllAdmin)
+     
 
   }
 
@@ -250,7 +265,35 @@ export function* saga(){
         }
     })
 
-    yield takeLatest(actionTypes.DeleteStaffSuccess,refreshStaffs)
+    
+
+    yield takeLatest(actionTypes.UpdateStaffRequest,function *updateStaffSaga(action){
+
+        console.log(action)
+
+        const clinicId = yield select(selectors.clinicId)
+     
+        
+
+        const params = {
+            clinicId,
+            staffId:action.staffId
+        }
+
+        const body = action.body
+        
+        
+        try{
+            yield call(putRequest,CLINIC_STAFFS,params,body)
+            yield put(actions.updateStaffSuccess())
+        }catch(error){
+            console.log(error)
+        }
+    })
+
+    yield takeLatest([actionTypes.DeleteStaffSuccess,actionTypes.UpdateStaffSuccess],refreshStaffs)
+
+    
     
    
 

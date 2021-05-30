@@ -16,7 +16,7 @@ export default function MainRoutes() {
 
         <Switch>
             <PrivateRoute component = {AdminMainLayout} path="/admin" redirectPath="/auth/login" />
-            <PublicRoute restricted={true} component={AuthPage} path="/auth/login" redirectPath="/admin/dashboard" exact />
+            <PublicRoute restricted={true} component={AuthPage} path="/auth/" redirectPath="/admin/dashboard"  />
             <Route component={Client} path="/" />
         </Switch>
         

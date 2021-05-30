@@ -12,45 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 import PropTypes from 'prop-types';
 
-const suggestions = [
-  { label: 'Afghanistan' },
-  { label: 'Aland Islands' },
-  { label: 'Albania' },
-  { label: 'Algeria' },
-  { label: 'American Samoa' },
-  { label: 'Andorra' },
-  { label: 'Angola' },
-  { label: 'Anguilla' },
-  { label: 'Antarctica' },
-  { label: 'Antigua and Barbuda' },
-  { label: 'Argentina' },
-  { label: 'Armenia' },
-  { label: 'Aruba' },
-  { label: 'Australia' },
-  { label: 'Austria' },
-  { label: 'Azerbaijan' },
-  { label: 'Bahamas' },
-  { label: 'Bahrain' },
-  { label: 'Bangladesh' },
-  { label: 'Barbados' },
-  { label: 'Belarus' },
-  { label: 'Belgium' },
-  { label: 'Belize' },
-  { label: 'Benin' },
-  { label: 'Bermuda' },
-  { label: 'Bhutan' },
-  { label: 'Bolivia, Plurinational State of' },
-  { label: 'Bonaire, Sint Eustatius and Saba' },
-  { label: 'Bosnia and Herzegovina' },
-  { label: 'Botswana' },
-  { label: 'Bouvet Island' },
-  { label: 'Brazil' },
-  { label: 'British Indian Ocean Territory' },
-  { label: 'Brunei Darussalam' },
-].map(suggestion => ({
-  value: suggestion.label,
-  label: suggestion.label,
-}));
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -271,7 +233,7 @@ const components = {
   ValueContainer,
 };
 
-export default function MultiSelect({onChange,value,options,fieldName,label}) {
+export default function MultiSelect({onChange,value,options,fieldName,label,labelKey}) {
 
     
   const classes = useStyles();
@@ -308,6 +270,8 @@ export default function MultiSelect({onChange,value,options,fieldName,label}) {
           classes={classes}
           styles={selectStyles}
           inputId="react-select-multiple"
+          getOptionLabel={option=>option[labelKey]}
+          getOptionValue={option=>option.id}
           TextFieldProps={{
             label: label,
             InputLabelProps: {

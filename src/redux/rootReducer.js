@@ -10,7 +10,7 @@ import * as clinic from "modules/Clinic/_redux/clinicRedux"
 export const rootReducer = history =>  combineReducers({
     router:connectRouter(history),
     auth:auth.reducer,
-    addressFields:administration.addressFieldReducer,
+    administration:administration.administrationReducer,
     clinic:clinic.clinicReducer
 });
 

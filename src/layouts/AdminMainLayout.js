@@ -1,10 +1,12 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import Layout from "./Admin2.js"
 import AdminRoutes from "pages/AdminRoutes"
+import {actions} from "modules/Administration/_redux/adminRedux"
+import {connect} from "react-redux"
 
-export default function AdminMainLayout() {
+function AdminMainLayout(props) {
 
-
+   
     
     return (
         
@@ -14,3 +16,6 @@ export default function AdminMainLayout() {
         </Layout>
     )
 }
+
+
+export default connect(null,actions)(AdminMainLayout)

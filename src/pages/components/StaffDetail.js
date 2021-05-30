@@ -4,18 +4,17 @@ import clsx from 'clsx';
 import 'pages/partials/Formik/formik-demo.css';
 import 'pages/partials/Formik/rich-editor.css';
 import Select from 'react-select';
+import {actions} from "modules/Auth/_redux/authRedux"
+import {connect, useSelector} from "react-redux"
+import {Formik} from "formik";
+import {languagesSelector,specsSelector,jobsSelector,titlesSelector} from "modules/Administration/_redux/selectors"
+import {withSnackbar} from "pages/partials/Snackbar/SnackbarHOC"
 
 
 
 
 import { 
     makeStyles,
-    IconButton,
-    Input,
-    InputLabel,
-    InputAdornment,
-    FormHelperText,
-    FormControl,
     TextField,
     MenuItem,
     Typography
@@ -28,102 +27,28 @@ import {
 import MultiSelect from "pages/partials/Formik/MultiSelect"
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-import { EditorState,convertToRaw} from 'draft-js';
+import { EditorState,convertToRaw,convertFromRaw} from 'draft-js';
 import { RichEditorExample } from "pages/partials/Formik/RichEditor";
 import * as Yup from "yup";
 
 
 
-const ranges = [
-    {
-      value: '0-20',
-      label: '0 to 20',
-    },
-    {
-      value: '21-50',
-      label: '21 to 50',
-    },
-    {
-      value: '51-100',
-      label: '51 to 100',
-    },
-  ];
 
-const titles = [
-    {
-        value:"Mr",
-        label:"Mr"
-    },
-    {
-        value:"Ms",
-        label:"Ms"
-    },
-    {
-        value:"Miss",
-        label:"Miss"
-    },
-    {
-        value:"Dr",
-        label:"Dr"
-    },
-    {
-        value:"Opt",
-        label:"Opt"
-    },
-    {
-        value:"Sec",
-        label:"Sec"
-    },
-]
-
-const specialisations = [
-    {
-        value:"Oral Surgery",
-        label:"Oral Surgery"
-    },
-    {
-        value:"Nursing",
-        label:"Nursing"
-    },
-    {
-        value:"Dentist",
-        label:"Dentist"
-    }
-    
-]
-
-const languages = [
-    {
-        value:"EN",
-        label:"English"
-    },
-    {
-        value:"TR",
-        label:"Turkish"
-    }
-]
 
 const gender= [
     {
-        value:"Male",
+        value:"M",
         label:"Male"
     },
     {
-        value:"Female",
+        value:"F",
         label:"Female"
     }
 ]
 
-const jobTitles = [
-    {
-        value:"Dentist",
-        label:"Dentist"
-    },
-    {
-        value:"Doctor",
-        label:"Doctor"
-    }
-]
+
+
+
 
   
   const useStyles = makeStyles(theme => ({
@@ -145,24 +70,34 @@ const jobTitles = [
 
   
   
-  export default function StaffDetail({selectedStaff,staff}) {
+ function StaffDetail(props) {
 
-    console.log(staff)
-    console.log(staff.firstname)
+    
 
+    const specialisations = useSelector(specsSelector)
+    const languages = useSelector(languagesSelector)
+    const jobTitles = useSelector(jobsSelector)
+    const personalTitles = useSelector(titlesSelector)
+    
+
+
+    
+
+ 
     const initialStaffValues = {
-        id:staff.id,
-        title: 'Ms',
-        firstname: staff.firstname,
-        lastname: staff.lastname,
-        jobTitle:staff.jobtitle,
-        gender: staff.gender,
-        editorState: EditorState.createEmpty(),
-        specialisations:staff.specialisations,
-        languages:staff.languages,
+        id:props.staff.id,
+        clinic:props.staff.clinic,
+        title: props.staff.title.id,
+        firstname: props.staff.firstname,
+        lastname: props.staff.lastname,
+        job:props.staff.job.id,
+        gender: props.staff.gender,
+        description: props.staff.description ? EditorState.createWithContent(convertFromRaw(JSON.parse(props.staff.description))) : EditorState.createEmpty(),
+        specialisations:props.staff.specialisations,
+        languages:props.staff.languages,
     }
 
-    console.log(initialStaffValues)
+    
     const LoginSchema = Yup.object().shape({
         firstname: Yup.string()
             .min(3, "Minimum 3 symbols")
@@ -176,20 +111,18 @@ const jobTitles = [
           .required(
            
           ),
+        title: Yup.number()
+        .required(
+        ),
+        job: Yup.number()
+        .required(
+        ),
+        gender : Yup.string().required(),
+
+          
       });
     
-      const formik = useFormik({
-        initialValues: initialStaffValues,
-        validationSchema: LoginSchema,
-       
-        onSubmit: values => {
-            console.log(JSON.stringify(convertToRaw(values.editorState.getCurrentContent())))
-            console.log(values)
-            
-          
-        },
-      });
-
+     
       
     const classes = useStyles();
     
@@ -197,160 +130,204 @@ const jobTitles = [
 
     return (
       <div className={`${classes.root} bg-white`}>
+          <Formik
+            initialValues = {initialStaffValues}
+            enableReinitialize = {true}
+            validationSchema= {LoginSchema}
+            onSubmit = {(values) => {
+
+                console.log(values)
+
+                const descriptionState = values.description.getCurrentContent();
+                const body = {...values}
+
+                if(body.languages){
+                   body.languages =  body.languages.map(language => language.id)
+                }
+                if(body.specialisations){
+                    body.specialisations = body.specialisations.map(spec => spec.id)
+                }
+
+                console.log(body)
+                console.log(props);
+                
         
-        <form  className="p-5" onSubmit={formik.handleSubmit}>
-
-    
-            <div className="d-flex align-items-center">
-
-            <TextField
-            select
-            className={`${clsx(classes.margin, classes.textField)} `}
-            variant="outlined"
-            id="title"
-            label="Title"
-            name="title"
-            value={formik.values.title}
-            onChange={formik.handleChange}
-            InputProps={{
-                startAdornment: ""
-            }}
-            >
-            {titles.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                {option.label}
-                </MenuItem>
-            ))}
-            </TextField>
-
-            
-
-            <TextField
-            id="firstname"
-            className={`${clsx(classes.margin, classes.textField)} `}
-            variant="outlined"
-            label="Firstname"
-            name="firstname"
-            value={formik.values.firstname}
-            onChange={formik.handleChange}
-            error={formik.touched.firstname && Boolean(formik.errors.firstname)}
-            
-            InputProps={{
-                startAdornment: "",
-            }}
-            />
-
-            
-            
-            <TextField
-            id="lastname"
-            className={`${clsx(classes.margin, classes.textField)} `}
-            variant="outlined"
-            label="Lastname"
-            name="lastname"
-            value={formik.values.lastname}
-            onChange={formik.handleChange}
-            error={formik.touched.lastname && Boolean(formik.errors.lastname)}
-            
-            InputProps={{
-                startAdornment: "",
-            }}
-            />
-
-            <ProfileAvatar />
-
-            </div>
-
-            <div class="d-flex align-items-center">
-            <TextField
-            select
-            className={`${clsx(classes.margin, classes.textField)} `}
-            variant="outlined"
-            id="gender"
-            label="Gender"
-            name="gender"
-            value={formik.values.gender}
-            onChange={formik.handleChange}
-            InputProps={{
-                startAdornment: ""
-            }}
-            >
-            {gender.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                {option.label}
-                </MenuItem>
-            ))}
-            </TextField>
-
-            <TextField
-            select
-            className={`${clsx(classes.margin, classes.textField)} `}
-            variant="outlined"
-            id="jobTitle"
-            label="Job Title"
-            name="jobTitle"
-            value={formik.values.jobTitle}
-            onChange={formik.handleChange}
-            InputProps={{
-                startAdornment: ""
-            }}
-            >
-            {jobTitles.map(option => (
-                <MenuItem key={option.value} value={option.value}>
-                {option.label}
-                </MenuItem>
-            ))}
-            </TextField>
-            </div>
-            <div className="ml-2 mt-2">
-            <Typography variant="body1" gutterBottom>
-                Descriptions
-             </Typography>
-
-            <RichEditorExample
-            editorState={formik.values.editorState}
-            onChange={formik.setFieldValue}/>
-            
-
-            </div>
-
-            <MultiSelect 
-                value = {formik.values.languages}
-                onChange = {formik.setFieldValue}
-                options = {languages}
-                fieldName = "languages"
-                label="Languages"
-            
                 
-            />
-
-            <MultiSelect 
-                    value = {formik.values.specialisations}
-                    onChange = {formik.setFieldValue}
-                    options = {specialisations}
-                    fieldName = "specialisations"
-                    label="Specialisations"
+                body.description = JSON.stringify(convertToRaw(descriptionState))
                 
-                    
-            />
 
-
-
-            
-            
-    
-
-
-        <button
-            id="kt_login_signin_submit"
-            type="submit"
-            
-            className={`btn btn-primary font-weight-bold px-9 py-4 my-3`}
+                props.updateStaffRequest(values.id,body)
+                props.snackbarShowMessage("Staff Informations Updated")
+            }}
           >
-            <span>Update Staff</span>
-           
-          </button>
-        </form>
+              {props => (
+                <form  className="p-5" onSubmit={props.handleSubmit}>
+
+    
+                <div className="d-flex align-items-center">
+
+                <TextField
+                select
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                id="title"
+                label="Title"
+                name="title"
+                error={props.touched.title && Boolean(props.errors.title)}
+                value={props.values.title}
+                onChange={props.handleChange}
+                InputProps={{
+                    startAdornment: ""
+                }}
+                >
+                {personalTitles.map(option => (
+                    <MenuItem key={option.id} value={option.id}>
+                    {option.name}
+                    </MenuItem>
+                ))}
+                </TextField>
+
+
+
+                <TextField
+                id="firstname"
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                label="Firstname"
+                name="firstname"
+                value={props.values.firstname}
+                onChange={props.handleChange}
+                error={props.touched.firstname && Boolean(props.errors.firstname)}
+
+                InputProps={{
+                    startAdornment: "",
+                }}
+                />
+
+
+
+                <TextField
+                id="lastname"
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                label="Lastname"
+                name="lastname"
+                value={props.values.lastname}
+                onChange={props.handleChange}
+                error={props.touched.lastname && Boolean(props.errors.lastname)}
+
+                InputProps={{
+                    startAdornment: "",
+                }}
+                />
+
+                <ProfileAvatar />
+
+                </div>
+
+                <div class="d-flex align-items-center">
+                <TextField
+                select
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                id="gender"
+                label="Gender"
+                name="gender"
+                value={props.values.gender}
+                error={props.touched.gender && Boolean(props.errors.gender)}
+                onChange={props.handleChange}
+                InputProps={{
+                    startAdornment: ""
+                }}
+                >
+                {gender.map(option => (
+                    <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                    </MenuItem>
+                ))}
+                </TextField>
+
+                <TextField
+                select
+                className={`${clsx(classes.margin, classes.textField)} `}
+                variant="outlined"
+                id="job"
+                label="Job Title"
+                name="job"
+                error={props.touched.job && Boolean(props.errors.job)}
+                value={props.values.job}
+                onChange={props.handleChange}
+                InputProps={{
+                    startAdornment: ""
+                }}
+                >
+                {jobTitles.map(option => (
+                    <MenuItem key={option.id} value={option.id}>
+                    {option.title}
+                    </MenuItem>
+                ))}
+                </TextField>
+                </div>
+                <div className="ml-2 mt-2">
+                <Typography variant="body1" gutterBottom>
+                    Descriptions
+                </Typography>
+
+                <RichEditorExample
+                editorState={props.values.description}
+                onChange={props.setFieldValue}/>
+
+
+                </div>
+
+                <MultiSelect 
+                    value = {props.values.languages}
+                    onChange = {props.setFieldValue}
+                    options = {languages}
+                    fieldName = "languages"
+                    label="Languages"
+                    labelKey="name"
+
+                    
+                />
+
+                <MultiSelect 
+                        value = {props.values.specialisations}
+                        onChange = {props.setFieldValue}
+                        options = {specialisations}
+                        fieldName = "specialisations"
+                        label="Specialisations"
+                        labelKey="title"
+                    
+                        
+                />
+
+
+
+
+
+
+
+
+                <button
+                id="kt_login_signin_submit"
+                type="submit"
+
+                className={`btn btn-primary font-weight-bold px-9 py-4 my-3`}
+                >
+                <span>Update Staff</span>
+
+                </button>
+                </form>
+              )}
+             
+
+          </Formik>
+        
+        
       </div>
     );
   }
+
+
+  export default connect(null,{updateStaffRequest:actions.updateStaffRequest})(withSnackbar((StaffDetail)))

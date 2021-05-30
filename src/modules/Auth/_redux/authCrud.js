@@ -1,3 +1,4 @@
+import { put } from "@redux-saga/core/effects";
 import axios from "axios";
 import {getAbsoluteApiUrl} from "modules/Helper"
 
@@ -91,6 +92,23 @@ export function remove(resource,params){
     switch(resource){
         case CLINIC_STAFFS:
             return axios.delete(CLINIC_STAFF_DETAIL_URL(params.clinicId,params.staffId),config)
+
+        default:
+            return 0
+    }
+
+}
+
+export function putRequest(resource,params,body){
+    const config = {
+        headers:{
+            'Content-type':'application/json'
+        }
+    }
+
+    switch(resource){
+        case CLINIC_STAFFS:
+            return axios.put(CLINIC_STAFF_DETAIL_URL(params.clinicId,params.staffId),body,config)
 
         default:
             return 0
